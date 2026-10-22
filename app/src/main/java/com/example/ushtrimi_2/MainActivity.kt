@@ -7,7 +7,6 @@ import KotlinFund_2.Student
 import KotlinFund_2.USerV3
 import KotlinFund_2.User
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -24,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.ushtrimi_2.ui.theme.Ushtrimi_2Theme
+import practice_1.runPractice
 
 class MainActivity : ComponentActivity() {
 
@@ -132,7 +132,6 @@ class MainActivity : ComponentActivity() {
 
 
 
-        firstName2 = getuserName(1, "")
 
         //String firstName = "Armend";
         loggedinUser = "Hello" + firstName
@@ -155,6 +154,7 @@ class MainActivity : ComponentActivity() {
 
 
         super.onCreate(savedInstanceState)
+        runPractice()
         enableEdgeToEdge()
         setContent {
             Ushtrimi_2Theme {
@@ -191,26 +191,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier,
     )
 
-}
-
-//String getUserName(String arg1, String arg2...... ){
- //
-//
-//
-//return "";
-
-// }
-
-fun getuserName(id: Int, token: String): String?{
-    if (id == 0 ){
-        return null
-    }
-    return token
-    procesUserPayemnt()
-}
-
-fun procesUserPayemnt(){
-    println("Payment processed successfully.....")
 }
 
 @Preview(showBackground = true)
