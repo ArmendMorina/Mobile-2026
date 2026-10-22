@@ -132,7 +132,6 @@ class MainActivity : ComponentActivity() {
 
 
 
-        firstName2 = getuserName(1, "")
 
         //String firstName = "Armend";
         loggedinUser = "Hello" + firstName
@@ -192,26 +191,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier,
     )
 
-}
-
-//String getUserName(String arg1, String arg2...... ){
- //
-//
-//
-//return "";
-
-// }
-
-fun getuserName(id: Int, token: String): String?{
-    if (id == 0 ){
-        return null
-    }
-    return token
-    procesUserPayemnt()
-}
-
-fun procesUserPayemnt(){
-    println("Payment processed successfully.....")
 }
 
 @Preview(showBackground = true)

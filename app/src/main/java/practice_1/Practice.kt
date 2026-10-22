@@ -2,14 +2,12 @@ package practice_1
 
 import kotlin.math.PI
 
-// 1. Student(name, grade) with a summary method
 class Student(val name: String, val grade: Int) {
     fun printSummary() {
         println("Student: $name, grade: $grade")
     }
 }
 
-// 2. Abstract class Shape with Circle and Rect
 abstract class Shape {
     abstract fun area(): Double
 }
@@ -22,7 +20,6 @@ class Rect(val width: Double, val height: Double) : Shape() {
     override fun area(): Double = width * height
 }
 
-// 3. Enum class Priority and data class Task
 enum class Priority { LOW, MEDIUM, HIGH }
 
 data class Task(val title: String, val priority: Priority)
