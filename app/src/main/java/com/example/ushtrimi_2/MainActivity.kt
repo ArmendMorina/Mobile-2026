@@ -6,7 +6,9 @@ import KotlinFund_2.Logger
 import KotlinFund_2.Student
 import KotlinFund_2.USerV3
 import KotlinFund_2.User
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,6 +29,9 @@ import practice_1.runPractice
 
 class MainActivity : ComponentActivity() {
 
+    private  val TAG = "MainActivity"
+
+    private var counter  = 0
 
     val firstName = "Armend"
     val age = 30
@@ -46,7 +51,6 @@ class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
 
        /* val listOfString = listOf("armend","morina","kaktus")
        val returnedElement =  listOfString.get(2)
@@ -164,6 +168,11 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier
                             .padding(innerPadding)
                             .clickable() {
+                                counter ++
+                                Log.d(TAG,"Counter value is: ${counter}")
+
+                                val detailsActivity = Intent(this, DetailsActivity::class.java)
+                                startActivity(detailsActivity)
                             }
                             .size(320.dp)
                             .background(Color.Red)
@@ -175,11 +184,45 @@ class MainActivity : ComponentActivity() {
         adress = "Cacttus education, rruga 50"
         val count = firstName2?.length
         println("Numri i karaktereve eshte  ${count}")
+        Log.d(TAG,"OnCreate called")
+        Log.d(TAG,"Actual counter value is: ${savedInstanceState?.getInt("Counter")?:0}")
+        counter = savedInstanceState?.getInt("Counter")?:0
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d(TAG,"onSaveInstanceState called.....")
+        outState.putInt("Counter",counter)
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
         firstName2 = null
+        Log.d(TAG,"OnDestroy called")
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG,"OnStart called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG,"OnResume called")
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG,"OnPause called")
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG,"OnStop called")
     }
 }
 
