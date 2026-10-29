@@ -29,33 +29,36 @@ import practice_1.runPractice
 
 class MainActivity : ComponentActivity() {
 
-    private  val TAG = "MainActivity"
+    private val TAG = "MainActivity"
 
-    private var counter  = 0
+    private var counter = 0
 
     val firstName = "Armend"
     val age = 30
     var adress: String = "Cacttus education , rruga 40"
     val lastName: String = "Morina"
 
-    // lateInit
-
     val color = 2
-    //Nullable
+
+    // Nullable
     var firstName2: String? = null
+
+    // lateinit
     private lateinit var myLogger: Logger
-
     lateinit var loggedinUser: String
-
-    lateinit var user : User
-
+    lateinit var user: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-       /* val listOfString = listOf("armend","morina","kaktus")
-       val returnedElement =  listOfString.get(2)
-        println("Returned element is: $returnedElement")*/
+        // Restore state first
+        counter = savedInstanceState?.getInt("Counter") ?: 0
+        Log.d(TAG, "OnCreate called")
+        Log.d(TAG, "Actual counter value is: $counter")
 
+        enableEdgeToEdge()
+
+        // Lists
         val listOfStringV2 = mutableListOf<String>()
         listOfStringV2.add("armend")
         listOfStringV2.add("morina")
@@ -63,103 +66,53 @@ class MainActivity : ComponentActivity() {
         listOfStringV2.add("kaktuss")
         listOfStringV2.add("kaktuss")
 
-
-
-        //println("requested elemntis : ${k}")
-
-        val editedList = listOfStringV2.map { curerntString->
-            curerntString.plus("\n")
+        val editedList = listOfStringV2.map { currentString ->
+            currentString.plus("\n")
         }
         println(editedList)
 
-      /*  val integers = listOf(2,3,4,5,6)
-        integers.map { curentInt->
-            if (curentInt% 2==0){
-                curentInt ++
-            }
-
-        }*/
-
-    /*  val edditedList =  listOfStringV2.forEach { actuaString->
-
-          val editedList  = mutableListOf<String>()
-         editedList.add( actuaString.plus("\n"))
-          return@forEach editedList
-        }
-*/
-        /*for (i in listOfStringV2){
-            if (i == "kaktuss"){
-                println("elemt is inside the list")
-            }else{
-                println("Current element is: ${i}")
-            }
-
-        }
-        */
-
-
-
         val listOfUSers = mutableListOf<User>()
-        listOfUSers.add(User("",""))
-        println("List of string: ${listOfStringV2}")
+        listOfUSers.add(User("", ""))
+        println("List of string: $listOfStringV2")
 
-        val userids  = mutableSetOf<String>()
+        val userids = mutableSetOf<String>()
         userids.add("")
 
-        //initialziation of kotlin classes
-        user = User("test@test.test","1234567890")
-
+        // Initialization of Kotlin classes
+        user = User("test@test.test", "1234567890")
         user.updateFirstname("Armend")
         user.updateLastname("Morina")
         user.updateAge(19999)
         user.firstname = "someuser"
-        println("Actual user toString()"+ user.toString())
+        println("Actual user toString()" + user.toString())
         println("Actual user hashCode: " + user.hashCode())
 
         myLogger = LogcatHelper2()
-
-        //
-
-        //
-        //
-        //
         myLogger = FileLogger()
-        val student = Student("","")
 
-        val user3 = USerV3("Armend","Morina")
-        println("testing dataclasses: ${user3.toString()}")
+        val student = Student("", "")
+
+        // Data classes
+        val user3 = USerV3("Armend", "Morina")
+        println("testing dataclasses: ${user3}")
         println("testing dataclasses hashcode: ${user3.hashCode()}")
-       val usrV31=  user3.copy(lastName = "Krasniqi")
-        println("testing dataclasses: ${usrV31.toString()}")
+        val usrV31 = user3.copy(lastName = "Krasniqi")
+        println("testing dataclasses: $usrV31")
+
         user = student
-      user.toString()
+        user.toString()
 
+        loggedinUser = "Hello $firstName"
 
-
-
-        //String firstName = "Armend";
-        loggedinUser = "Hello" + firstName
-
-        when(color){
-            2 ->{
-
-            }
-            1->{
-
-            }
-            499->{
-
-            }
-            else -> {
-
-            }
-
+        when (color) {
+            2 -> {}
+            1 -> {}
+            499 -> {}
+            else -> {}
         }
 
-
-        super.onCreate(savedInstanceState)
         runPractice()
-        enableEdgeToEdge()
+
         setContent {
             Ushtrimi_2Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -167,65 +120,60 @@ class MainActivity : ComponentActivity() {
                         name = "cacttus",
                         modifier = Modifier
                             .padding(innerPadding)
-                            .clickable() {
-                                counter ++
-                                Log.d(TAG,"Counter value is: ${counter}")
+                            .clickable {
+                                counter++
+                                Log.d(TAG, "Counter value is: $counter")
 
-                                val detailsActivity = Intent(this, DetailsActivity::class.java)
+                                val detailsActivity = Intent(this@MainActivity, DetailsActivity::class.java).apply {
+                                    putExtra("EXTRA_NAME", "Lorik")
+                                    putExtra("EXTRA_COUNTER", counter)
+                                }
                                 startActivity(detailsActivity)
                             }
                             .size(320.dp)
                             .background(Color.Red)
-
                     )
                 }
             }
         }
+
         adress = "Cacttus education, rruga 50"
         val count = firstName2?.length
-        println("Numri i karaktereve eshte  ${count}")
-        Log.d(TAG,"OnCreate called")
-        Log.d(TAG,"Actual counter value is: ${savedInstanceState?.getInt("Counter")?:0}")
-        counter = savedInstanceState?.getInt("Counter")?:0
+        println("Numri i karaktereve eshte  $count")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.d(TAG,"onSaveInstanceState called.....")
-        outState.putInt("Counter",counter)
+        Log.d(TAG, "onSaveInstanceState called.....")
+        outState.putInt("Counter", counter)
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
         firstName2 = null
-        Log.d(TAG,"OnDestroy called")
-
+        Log.d(TAG, "OnDestroy called")
     }
 
     override fun onStart() {
         super.onStart()
-        Log.d(TAG,"OnStart called")
+        Log.d(TAG, "OnStart called")
     }
 
     override fun onResume() {
         super.onResume()
-        Log.d(TAG,"OnResume called")
-
+        Log.d(TAG, "OnResume called")
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d(TAG,"OnPause called")
-
+        Log.d(TAG, "OnPause called")
     }
 
     override fun onStop() {
         super.onStop()
-        Log.d(TAG,"OnStop called")
+        Log.d(TAG, "OnStop called")
     }
 }
-
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
@@ -233,7 +181,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         text = "Hello $name!",
         modifier = modifier,
     )
-
 }
 
 @Preview(showBackground = true)
