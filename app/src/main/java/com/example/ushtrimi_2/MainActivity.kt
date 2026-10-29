@@ -172,6 +172,9 @@ class MainActivity : ComponentActivity() {
                                 Log.d(TAG,"Counter value is: ${counter}")
 
                                 val detailsActivity = Intent(this, DetailsActivity::class.java)
+                                detailsActivity.putExtra("firstName", firstName)
+                                detailsActivity.putExtra("age", age)
+                                detailsActivity.putExtra("counter", counter)
                                 startActivity(detailsActivity)
                             }
                             .size(320.dp)
