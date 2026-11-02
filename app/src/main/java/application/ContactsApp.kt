@@ -8,6 +8,5 @@ class ContactsApp : Application() {
     private val TAG = "ContactsApp"
     override fun onCreate() {
         super.onCreate()
-        Log.d(TAG,"Application instace created...")
     }
 }

@@ -9,11 +9,15 @@ class DetailsActivity: ComponentActivity() {
 
     private val TAG  = "DetailsActivity"
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+    // This is called on special case from Android after reboot.
+  /*  override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
         Log.d(TAG,"DetailsActivity created....")
+    }*/
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG,"DetailsActivity created....")
     }
-
-
 
 }
