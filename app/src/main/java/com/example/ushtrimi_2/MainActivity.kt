@@ -1,7 +1,9 @@
 package com.example.ushtrimi_2
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -23,12 +26,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.ushtrimi_2.ui.theme.Ushtrimi_2Theme
@@ -45,7 +54,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Ushtrimi_2Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen(innerPadding)
+                    LoginScreen(innerPadding )
 
                 }
             }
@@ -108,6 +117,10 @@ fun GreetingPreview() {
 
 @Composable
 fun LoginScreen(innerPadding: PaddingValues) {
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    val context = LocalContext.current
+
     Box(
         modifier = Modifier
             .padding(innerPadding)
@@ -125,17 +138,13 @@ fun LoginScreen(innerPadding: PaddingValues) {
             Image(
                 painter = painterResource(R.drawable.ic_lock),
                 contentDescription = "",
-                modifier = Modifier.size(100.dp),
-                colorFilter = ColorFilter.tint(Color.Blue)
+                modifier = Modifier.size(100.dp)
             )
 
             Text(
                 text = "Welcome back",
                 style = MaterialTheme.typography.headlineLarge
             )
-
-           var email = ""
-
             //email
             OutlinedTextField(
                 value = email,
@@ -143,34 +152,37 @@ fun LoginScreen(innerPadding: PaddingValues) {
                 onValueChange = {
                     email = it
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 maxLines = 1,
                 modifier = Modifier.fillMaxWidth()
-
             )
 
             //password
             OutlinedTextField(
-                value = "",
+                value = password,
                 label = { Text(text = "Password") },
                 onValueChange = {
-
+                    password = it
                 },
+                visualTransformation = PasswordVisualTransformation(),
                 maxLines = 1,
-                modifier = Modifier.fillMaxWidth()
-
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
 
             Button(
-                onClick = {},
-                modifier = Modifier.fillMaxWidth()
+                onClick = {
+                    Toast.makeText(context,"Email and password from user are: ${email} ${password}",
+                        Toast.LENGTH_LONG).show();
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(32.dp),
-                enabled = false
+                enabled = !email.isBlank() && !password.isBlank()
             ) {
                 Text(text = "Login")
             }
         }
-
-
     }
 
 }
