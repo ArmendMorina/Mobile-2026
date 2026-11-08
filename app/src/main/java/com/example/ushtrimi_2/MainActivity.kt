@@ -1,222 +1,422 @@
 package com.example.ushtrimi_2
 
-import KotlinFund_2.FileLogger
-import KotlinFund_2.LogcatHelper2
-import KotlinFund_2.Logger
-import KotlinFund_2.Student
-import KotlinFund_2.USerV3
-import KotlinFund_2.User
 import android.os.Bundle
-import android.widget.Button
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.example.ushtrimi_2.ui.theme.Ushtrimi_2Theme
 
 class MainActivity : ComponentActivity() {
 
-
-    val firstName = "Armend"
-    val age = 30
-    var adress: String = "Cacttus education , rruga 40"
-    val lastName: String = "Morina"
-
-    // lateInit
-
-    val color = 2
-    //Nullable
-    var firstName2: String? = null
-    private lateinit var myLogger: Logger
-
-    lateinit var loggedinUser: String
-
-    lateinit var user : User
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
-       /* val listOfString = listOf("armend","morina","kaktus")
-       val returnedElement =  listOfString.get(2)
-        println("Returned element is: $returnedElement")*/
-
-        val listOfStringV2 = mutableListOf<String>()
-        listOfStringV2.add("armend")
-        listOfStringV2.add("morina")
-        listOfStringV2.add("kaktuss")
-        listOfStringV2.add("kaktuss")
-        listOfStringV2.add("kaktuss")
-
-
-
-        //println("requested elemntis : ${k}")
-
-        val editedList = listOfStringV2.map { curerntString->
-            curerntString.plus("\n")
-        }
-        println(editedList)
-
-      /*  val integers = listOf(2,3,4,5,6)
-        integers.map { curentInt->
-            if (curentInt% 2==0){
-                curentInt ++
-            }
-
-        }*/
-
-    /*  val edditedList =  listOfStringV2.forEach { actuaString->
-
-          val editedList  = mutableListOf<String>()
-         editedList.add( actuaString.plus("\n"))
-          return@forEach editedList
-        }
-*/
-        /*for (i in listOfStringV2){
-            if (i == "kaktuss"){
-                println("elemt is inside the list")
-            }else{
-                println("Current element is: ${i}")
-            }
-
-        }
-        */
-
-
-
-        val listOfUSers = mutableListOf<User>()
-        listOfUSers.add(User("",""))
-        println("List of string: ${listOfStringV2}")
-
-        val userids  = mutableSetOf<String>()
-        userids.add("")
-
-        //initialziation of kotlin classes
-        user = User("test@test.test","1234567890")
-
-        user.updateFirstname("Armend")
-        user.updateLastname("Morina")
-        user.updateAge(19999)
-        user.firstname = "someuser"
-        println("Actual user toString()"+ user.toString())
-        println("Actual user hashCode: " + user.hashCode())
-
-        myLogger = LogcatHelper2()
-
-        //
-
-        //
-        //
-        //
-        myLogger = FileLogger()
-        val student = Student("","")
-
-        val user3 = USerV3("Armend","Morina")
-        println("testing dataclasses: ${user3.toString()}")
-        println("testing dataclasses hashcode: ${user3.hashCode()}")
-       val usrV31=  user3.copy(lastName = "Krasniqi")
-        println("testing dataclasses: ${usrV31.toString()}")
-        user = student
-      user.toString()
-
-
-
-        firstName2 = getuserName(1, "")
-
-        //String firstName = "Armend";
-        loggedinUser = "Hello" + firstName
-
-        when(color){
-            2 ->{
-
-            }
-            1->{
-
-            }
-            499->{
-
-            }
-            else -> {
-
-            }
-
-        }
-
-
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            Ushtrimi_2Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "cacttus",
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .clickable() {
-                            }
-                            .size(320.dp)
-                            .background(Color.Red)
 
-                    )
-                }
+        setContent {
+            MaterialTheme {
+                App()
             }
         }
-        adress = "Cacttus education, rruga 50"
-        val count = firstName2?.length
-        println("Numri i karaktereve eshte  ${count}")
+    }
+}
+
+@Composable
+fun App() {
+
+    var showSignUp by remember {
+        mutableStateOf(false)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        firstName2 = null
+    if (showSignUp) {
+
+        SignUpScreen(
+            onBackToLogin = {
+                showSignUp = false
+            }
+        )
+
+    } else {
+
+        LoginScreen(
+            onSignUpClick = {
+                showSignUp = true
+            }
+        )
     }
 }
 
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier,
-    )
+fun LoginScreen(
+    onSignUpClick: () -> Unit
+) {
 
-}
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
-//String getUserName(String arg1, String arg2...... ){
- //
-//
-//
-//return "";
+        Text(
+            text = "Login",
+            style = MaterialTheme.typography.headlineMedium
+        )
 
-// }
+        Spacer(
+            modifier = Modifier.height(24.dp)
+        )
 
-fun getuserName(id: Int, token: String): String?{
-    if (id == 0 ){
-        return null
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            label = {
+                Text("Email")
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
+
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            label = {
+                Text("Password")
+            },
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(
+            modifier = Modifier.height(20.dp)
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+
+            Button(
+                onClick = {},
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Login")
+            }
+
+            Button(
+                onClick = onSignUpClick,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Sign Up")
+            }
+        }
     }
-    return token
-    procesUserPayemnt()
 }
 
-fun procesUserPayemnt(){
-    println("Payment processed successfully.....")
-}
 
-@Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    Ushtrimi_2Theme {
-        Greeting("Android")
+fun SignUpScreen(
+    onBackToLogin: () -> Unit
+) {
+
+    var firstName by remember {
+        mutableStateOf("")
+    }
+
+    var lastName by remember {
+        mutableStateOf("")
+    }
+
+    var email by remember {
+        mutableStateOf("")
+    }
+
+    var password by remember {
+        mutableStateOf("")
+    }
+
+    var confirmPassword by remember {
+        mutableStateOf("")
+    }
+
+    var termsAccepted by remember {
+        mutableStateOf(false)
+    }
+
+    var showPassword by remember {
+        mutableStateOf(false)
+    }
+
+
+    val passwordsMatch =
+        password == confirmPassword
+
+    val allFieldsFilled =
+        firstName.isNotBlank() &&
+                lastName.isNotBlank() &&
+                email.isNotBlank() &&
+                password.isNotBlank() &&
+                confirmPassword.isNotBlank()
+
+    val passwordLongEnough =
+        password.length >= 6
+
+    val canCreateAccount =
+        allFieldsFilled &&
+                passwordsMatch &&
+                passwordLongEnough &&
+                termsAccepted
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(
+            text = "Create account",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Spacer(
+            modifier = Modifier.height(20.dp)
+        )
+
+
+        OutlinedTextField(
+            value = firstName,
+            onValueChange = {
+                firstName = it
+            },
+            label = {
+                Text("First name")
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+
+
+        OutlinedTextField(
+            value = lastName,
+            onValueChange = {
+                lastName = it
+            },
+            label = {
+                Text("Last name")
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+
+
+        OutlinedTextField(
+            value = email,
+            onValueChange = {
+                email = it
+            },
+            label = {
+                Text("Email address")
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+
+
+        OutlinedTextField(
+            value = password,
+            onValueChange = {
+                password = it
+            },
+            label = {
+                Text("Password")
+            },
+            visualTransformation =
+                if (showPassword) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+
+
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = {
+                confirmPassword = it
+            },
+            label = {
+                Text("Confirm password")
+            },
+            visualTransformation =
+                if (showPassword) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+
+        if (
+            confirmPassword.isNotEmpty() &&
+            !passwordsMatch
+        ) {
+
+            Text(
+                text = "Passwords do not match",
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            )
+        }
+
+
+        if (
+            password.isNotEmpty() &&
+            password.length < 6
+        ) {
+
+            Text(
+                text = "Password must be at least 6 characters",
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            )
+        }
+
+
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
+
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            Checkbox(
+                checked = showPassword,
+                onCheckedChange = {
+                    showPassword = it
+                }
+            )
+
+            Text(
+                text = "Show password"
+            )
+        }
+
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            Checkbox(
+                checked = termsAccepted,
+                onCheckedChange = {
+                    termsAccepted = it
+                }
+            )
+
+            Text(
+                text = "I agree to the Terms of Use"
+            )
+        }
+
+
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+
+
+        Button(
+            onClick = {
+
+                Log.d(
+                    "SignUp",
+                    "First name: $firstName"
+                )
+
+                Log.d(
+                    "SignUp",
+                    "Last name: $lastName"
+                )
+
+                Log.d(
+                    "SignUp",
+                    "Email: $email"
+                )
+            },
+            enabled = canCreateAccount,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            Text("Create account")
+        }
+
+
+        Spacer(
+            modifier = Modifier.height(10.dp)
+        )
+
+
+        Button(
+            onClick = onBackToLogin,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            Text("Back to Login")
+        }
     }
 }
