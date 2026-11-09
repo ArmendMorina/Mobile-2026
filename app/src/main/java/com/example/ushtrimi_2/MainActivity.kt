@@ -190,6 +190,16 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     LoginScreen(
                         innerPadding = innerPadding,
+                        onLoginSuccess = {
+                            counter ++
+                            Log.d(TAG,"Counter value is: ${counter}")
+
+                            // Open the Details screen and pass data to it
+                            val detailsActivity = Intent(this, DetailsActivity::class.java)
+                            detailsActivity.putExtra(DetailsActivity.EXTRA_MESSAGE, "Opened from MainActivity")
+                            detailsActivity.putExtra(DetailsActivity.EXTRA_COUNTER, counter)
+                            startActivity(detailsActivity)
+                        },
                         onSignUpClick = {
                             // Open the Sign Up screen
                             startActivity(Intent(this, SignUpActivity::class.java))
@@ -262,7 +272,11 @@ fun GreetingPreview() {
 }
 
 @Composable
-fun LoginScreen(innerPadding: PaddingValues, onSignUpClick: () -> Unit) {
+fun LoginScreen(
+    innerPadding: PaddingValues,
+    onLoginSuccess: () -> Unit,
+    onSignUpClick: () -> Unit
+) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
@@ -325,6 +339,7 @@ fun LoginScreen(innerPadding: PaddingValues, onSignUpClick: () -> Unit) {
                         if (validateUser(email = email, password = password)){
                             Toast.makeText(context,"Email and password from user are correct",
                                 Toast.LENGTH_LONG).show();
+                            onLoginSuccess()
                         }else{
                             showErrorAlert = true
                         }
