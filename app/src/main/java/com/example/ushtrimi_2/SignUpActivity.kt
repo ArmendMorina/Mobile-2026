@@ -2,6 +2,7 @@ package com.example.ushtrimi_2
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.ushtrimi_2.reusableCoomposable.ConfirmPasswordField
 import com.example.ushtrimi_2.reusableCoomposable.CreateAccountButton
@@ -63,6 +65,8 @@ fun SignUpScreen(innerPadding: PaddingValues) {
     var confirmPassword by remember { mutableStateOf("") }
     var agreeToTerms by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -126,6 +130,12 @@ fun SignUpScreen(innerPadding: PaddingValues) {
                 Log.d("SignUpScreen", "First name: $firstName")
                 Log.d("SignUpScreen", "Last name: $lastName")
                 Log.d("SignUpScreen", "Email: $email")
+
+                Toast.makeText(
+                    context,
+                    "Account created for $firstName $lastName",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         )
     }
