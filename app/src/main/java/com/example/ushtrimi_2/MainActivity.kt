@@ -58,8 +58,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Ushtrimi_2Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen(innerPadding )
-
+                    LoginRoute(innerPadding)
                 }
             }
         }
@@ -119,20 +118,63 @@ fun GreetingPreview() {
     }
 }
 
+/** Stateful wrapper: owns the Login state and passes it down to the stateless [LoginScreen]. */
 @Composable
-fun LoginScreen(innerPadding: PaddingValues) {
+fun LoginRoute(innerPadding: PaddingValues) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
-    val context = LocalContext.current
     var showErrorAlert by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
+    LoginScreen(
+        innerPadding = innerPadding,
+        email = email,
+        password = password,
+        onEmailChange = { email = it },
+        onPasswordChange = { password = it },
+        onLoginClick = {
+            if (validateUser(email = email, password = password)) {
+                Toast.makeText(
+                    context, "Email and password from user are correct",
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                showErrorAlert = true
+            }
+        }
+    )
+
+    if (showErrorAlert) {
+        AlertDialog(
+            title = { Text(text = "Something went wrong") },
+            text = { Text(text = "Please check your email  or password ") },
+            onDismissRequest = { showErrorAlert = false },
+            confirmButton = {
+                TextButton(onClick = { showErrorAlert = false }) { Text(text = "Ok") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showErrorAlert = false }) { Text(text = "Cancel") }
+            }
+        )
+    }
+}
+
+/** Stateless: everything comes in as parameters, events go out as lambdas. */
+@Composable
+fun LoginScreen(
+    innerPadding: PaddingValues,
+    email: String,
+    password: String,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLoginClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -150,69 +192,31 @@ fun LoginScreen(innerPadding: PaddingValues) {
                 text = "Welcome back",
                 style = MaterialTheme.typography.headlineLarge
             )
-            //email
+
             ReusableInputFiled(
                 value = email,
-                event = {enteredEmail->
-                  email = enteredEmail
-                },
+                event = onEmailChange,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 label = "Email"
             )
 
-            //password
             ReusableInputFiled(
-               value = password,
-               event = {eneteredPassword->
-                   password = eneteredPassword
-               },
-               keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-               visualTransformation = PasswordVisualTransformation(),
-               label = "Password"
-           )
+                value = password,
+                event = onPasswordChange,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation = PasswordVisualTransformation(),
+                label = "Password"
+            )
 
             Button(
-                onClick = {
-                    if (validateUser(email = email, password = password)){
-                        Toast.makeText(context,"Email and password from user are correct",
-                            Toast.LENGTH_LONG).show();
-                    }else{
-                       showErrorAlert = true
-                    }
-
-                },
+                onClick = onLoginClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(32.dp),
-                enabled = !email.isBlank() && !password.isBlank()
+                enabled = email.isNotBlank() && password.isNotBlank()
             ) {
                 Text(text = "Login")
             }
         }
     }
-
-    if (showErrorAlert){
-        AlertDialog(
-            title = {Text(text = "Something went wrong")},
-            text = {Text(text = "Please check your email  or password ")},
-            onDismissRequest = {
-                showErrorAlert = false
-            },
-            confirmButton ={
-                TextButton(onClick = {showErrorAlert = false}) {
-                    Text(text = "Ok")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = {showErrorAlert = false}) {
-                    Text(text = "Cancel")
-                }
-            }
-        )
-    }
-
-
-
-
-
 }
