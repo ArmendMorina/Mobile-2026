@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -57,8 +59,20 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Ushtrimi_2Theme {
+                // State hoisting: the current screen lives here, above both screens.
+                var showSignUp by rememberSaveable { mutableStateOf(false) }
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginRoute(innerPadding)
+                    if (showSignUp) {
+                        SignUpRoute(
+                            innerPadding = innerPadding,
+                            onBack = { showSignUp = false }
+                        )
+                    } else {
+                        LoginRoute(
+                            innerPadding = innerPadding,
+                            onSignUpClick = { showSignUp = true }
+                        )
+                    }
                 }
             }
         }
@@ -120,7 +134,7 @@ fun GreetingPreview() {
 
 /** Stateful wrapper: owns the Login state and passes it down to the stateless [LoginScreen]. */
 @Composable
-fun LoginRoute(innerPadding: PaddingValues) {
+fun LoginRoute(innerPadding: PaddingValues, onSignUpClick: () -> Unit) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var showErrorAlert by remember { mutableStateOf(false) }
@@ -141,7 +155,8 @@ fun LoginRoute(innerPadding: PaddingValues) {
             } else {
                 showErrorAlert = true
             }
-        }
+        },
+        onSignUpClick = onSignUpClick
     )
 
     if (showErrorAlert) {
@@ -167,7 +182,8 @@ fun LoginScreen(
     password: String,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
+    onSignUpClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -208,14 +224,25 @@ fun LoginScreen(
                 label = "Password"
             )
 
-            Button(
-                onClick = onLoginClick,
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp),
-                enabled = email.isNotBlank() && password.isNotBlank()
+                    .padding(vertical = 32.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(text = "Login")
+                Button(
+                    onClick = onLoginClick,
+                    modifier = Modifier.weight(1f),
+                    enabled = email.isNotBlank() && password.isNotBlank()
+                ) {
+                    Text(text = "Login")
+                }
+                OutlinedButton(
+                    onClick = onSignUpClick,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(text = "Sign Up")
+                }
             }
         }
     }
