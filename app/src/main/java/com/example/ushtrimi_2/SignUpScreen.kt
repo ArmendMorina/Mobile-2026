@@ -1,6 +1,7 @@
 package com.example.ushtrimi_2
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,6 +42,9 @@ fun SignUpRoute(innerPadding: PaddingValues, onBack: () -> Unit) {
     var confirmPassword by rememberSaveable { mutableStateOf("") }
     var termsAccepted by rememberSaveable { mutableStateOf(false) }
     var showPassword by rememberSaveable { mutableStateOf(false) }
+
+    // System Back returns to Login, same as the "Back to Login" button.
+    BackHandler(onBack = onBack)
 
     SignUpScreen(
         innerPadding = innerPadding,
