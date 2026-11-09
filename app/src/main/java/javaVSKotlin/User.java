@@ -2,12 +2,21 @@ package javaVSKotlin;
 
 import org.jetbrains.annotations.NotNull;
 
-import KotlinFund_2.Student;
+public class User {
+    private final String studentEmail;
+    private final String studentPassword;
 
-public class User extends Student {
     public User(@NotNull String studentEmail, @NotNull String studentPassword) {
-        super(studentEmail, studentPassword);
+        this.studentEmail = studentEmail;
+        this.studentPassword = studentPassword;
+    }
+
+    public String getStudentEmail() {
+        return studentEmail;
+    }
+
+    public String getStudentPassword() {
+        return studentPassword;
     }
 }
-
 

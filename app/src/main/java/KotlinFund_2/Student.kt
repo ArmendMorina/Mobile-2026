@@ -1,9 +1,7 @@
 package KotlinFund_2
 
-open class Student( val studentEmail: String, val studentPassword: String) :
-    User(email = studentEmail, password =  studentPassword)
-{
-
-
+class Student(val name: String, val grade: Int) {
+    fun printSummary() {
+        println("Student: $name, Grade: $grade")
+    }
 }
-
