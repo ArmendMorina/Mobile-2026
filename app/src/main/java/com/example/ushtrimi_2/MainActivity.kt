@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -57,9 +60,24 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Ushtrimi_2Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen(innerPadding )
+                // state hoisted here so both screens can change which one is shown
+                var showSignUp by rememberSaveable { mutableStateOf(false) }
 
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    if (showSignUp) {
+                        BackHandler {
+                            showSignUp = false
+                        }
+                        SignUpScreen(
+                            innerPadding = innerPadding,
+                            onBackToLogin = { showSignUp = false }
+                        )
+                    } else {
+                        LoginScreen(
+                            innerPadding = innerPadding,
+                            onSignUpClick = { showSignUp = true }
+                        )
+                    }
                 }
             }
         }
@@ -120,7 +138,7 @@ fun GreetingPreview() {
 }
 
 @Composable
-fun LoginScreen(innerPadding: PaddingValues) {
+fun LoginScreen(innerPadding: PaddingValues, onSignUpClick: () -> Unit) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
@@ -171,22 +189,34 @@ fun LoginScreen(innerPadding: PaddingValues) {
                label = "Password"
            )
 
-            Button(
-                onClick = {
-                    if (validateUser(email = email, password = password)){
-                        Toast.makeText(context,"Email and password from user are correct",
-                            Toast.LENGTH_LONG).show();
-                    }else{
-                       showErrorAlert = true
-                    }
-
-                },
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp),
-                enabled = !email.isBlank() && !password.isBlank()
+                    .padding(32.dp)
             ) {
-                Text(text = "Login")
+                Button(
+                    onClick = {
+                        if (validateUser(email = email, password = password)){
+                            Toast.makeText(context,"Email and password from user are correct",
+                                Toast.LENGTH_LONG).show();
+                        }else{
+                           showErrorAlert = true
+                        }
+
+                    },
+                    modifier = Modifier.weight(1f),
+                    enabled = !email.isBlank() && !password.isBlank()
+                ) {
+                    Text(text = "Login")
+                }
+
+                OutlinedButton(
+                    onClick = onSignUpClick,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(text = "Sign Up")
+                }
             }
         }
     }
