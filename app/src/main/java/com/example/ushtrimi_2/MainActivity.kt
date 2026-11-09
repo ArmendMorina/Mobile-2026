@@ -6,22 +6,38 @@ import KotlinFund_2.Logger
 import KotlinFund_2.Student
 import KotlinFund_2.USerV3
 import KotlinFund_2.User
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.ushtrimi_2.ui.theme.Ushtrimi_2Theme
@@ -163,21 +179,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             Ushtrimi_2Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "cacttus",
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .clickable() {
-                                counter ++
-                                Log.d(TAG,"Counter value is: ${counter}")
-
-                                val detailsActivity = Intent(this, DetailsActivity::class.java)
-                                startActivity(detailsActivity)
-                            }
-                            .size(320.dp)
-                            .background(Color.Red)
-
-                    )
+                    var showSignUp by remember { mutableStateOf(false) }
+                    if (showSignUp) {
+                        SignUpScreen(
+                            modifier = Modifier.padding(innerPadding),
+                            onBackToLogin = { showSignUp = false }
+                        )
+                    } else {
+                        LoginScreen(
+                            modifier = Modifier.padding(innerPadding),
+                            onSignUpClick = { showSignUp = true }
+                        )
+                    }
                 }
             }
         }
@@ -226,6 +239,212 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+@Composable
+fun LoginScreen(
+    modifier: Modifier = Modifier,
+    onSignUpClick: () -> Unit
+) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Login", style = MaterialTheme.typography.headlineMedium)
+        OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email address") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Password") },
+            visualTransformation = PasswordVisualTransformation(),
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Button(onClick = {}, modifier = Modifier.weight(1f)) {
+                Text("Login")
+            }
+            Button(onClick = onSignUpClick, modifier = Modifier.weight(1f)) {
+                Text("Sign Up")
+            }
+        }
+    }
+}
+
+@Composable
+fun SignUpScreen(
+    modifier: Modifier = Modifier,
+    onBackToLogin: () -> Unit
+) {
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    var termsAccepted by remember { mutableStateOf(false) }
+    var showPassword by remember { mutableStateOf(false) }
+
+    val passwordsMatch = password == confirmPassword
+    val formIsComplete = listOf(firstName, lastName, email, password, confirmPassword)
+        .all { it.isNotBlank() }
+    val canCreateAccount = formIsComplete && passwordsMatch && termsAccepted
+    val passwordTransformation =
+        if (showPassword) VisualTransformation.None else PasswordVisualTransformation()
+
+    SignUpForm(
+        modifier = modifier,
+        firstName = firstName,
+        onFirstNameChange = { firstName = it },
+        lastName = lastName,
+        onLastNameChange = { lastName = it },
+        email = email,
+        onEmailChange = { email = it },
+        password = password,
+        onPasswordChange = { password = it },
+        confirmPassword = confirmPassword,
+        onConfirmPasswordChange = { confirmPassword = it },
+        termsAccepted = termsAccepted,
+        onTermsAcceptedChange = { termsAccepted = it },
+        showPassword = showPassword,
+        onShowPasswordChange = { showPassword = it },
+        passwordTransformation = passwordTransformation,
+        passwordsMatch = passwordsMatch,
+        canCreateAccount = canCreateAccount,
+        onCreateAccount = {
+            Log.d("SignUpScreen", "First name: $firstName, Last name: $lastName, Email: $email")
+        },
+        onBackToLogin = onBackToLogin
+    )
+}
+
+@Composable
+private fun SignUpForm(
+    modifier: Modifier,
+    firstName: String,
+    onFirstNameChange: (String) -> Unit,
+    lastName: String,
+    onLastNameChange: (String) -> Unit,
+    email: String,
+    onEmailChange: (String) -> Unit,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    confirmPassword: String,
+    onConfirmPasswordChange: (String) -> Unit,
+    termsAccepted: Boolean,
+    onTermsAcceptedChange: (Boolean) -> Unit,
+    showPassword: Boolean,
+    onShowPasswordChange: (Boolean) -> Unit,
+    passwordTransformation: VisualTransformation,
+    passwordsMatch: Boolean,
+    canCreateAccount: Boolean,
+    onCreateAccount: () -> Unit,
+    onBackToLogin: () -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Create account", style = MaterialTheme.typography.headlineMedium)
+        OutlinedTextField(
+            value = firstName,
+            onValueChange = onFirstNameChange,
+            label = { Text("First name") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        OutlinedTextField(
+            value = lastName,
+            onValueChange = onLastNameChange,
+            label = { Text("Last name") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        OutlinedTextField(
+            value = email,
+            onValueChange = onEmailChange,
+            label = { Text("Email address") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        OutlinedTextField(
+            value = password,
+            onValueChange = onPasswordChange,
+            label = { Text("Password") },
+            supportingText = { Text("Password must be at least 6 characters") },
+            visualTransformation = passwordTransformation,
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = onConfirmPasswordChange,
+            label = { Text("Confirm password") },
+            visualTransformation = passwordTransformation,
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        if (confirmPassword.isNotEmpty() && !passwordsMatch) {
+            Text(
+                text = "Passwords do not match",
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onShowPasswordChange(!showPassword) },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = showPassword,
+                onCheckedChange = null
+            )
+            Text("Show password")
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onTermsAcceptedChange(!termsAccepted) },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = termsAccepted,
+                onCheckedChange = null
+            )
+            Text("I agree to the Terms of Use")
+        }
+        Button(
+            onClick = onCreateAccount,
+            enabled = canCreateAccount,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Create account")
+        }
+        TextButton(onClick = onBackToLogin) {
+            Text("Back to login")
+        }
+    }
+}
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
