@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.ushtrimi_2.reusableCoomposable.ReusableInputFiled
 
@@ -39,6 +40,7 @@ fun SignUpRoute(innerPadding: PaddingValues, onBack: () -> Unit) {
     var password by rememberSaveable { mutableStateOf("") }
     var confirmPassword by rememberSaveable { mutableStateOf("") }
     var termsAccepted by rememberSaveable { mutableStateOf(false) }
+    var showPassword by rememberSaveable { mutableStateOf(false) }
 
     SignUpScreen(
         innerPadding = innerPadding,
@@ -48,12 +50,14 @@ fun SignUpRoute(innerPadding: PaddingValues, onBack: () -> Unit) {
         password = password,
         confirmPassword = confirmPassword,
         termsAccepted = termsAccepted,
+        showPassword = showPassword,
         onFirstNameChange = { firstName = it },
         onLastNameChange = { lastName = it },
         onEmailChange = { email = it },
         onPasswordChange = { password = it },
         onConfirmPasswordChange = { confirmPassword = it },
         onTermsChange = { termsAccepted = it },
+        onShowPasswordChange = { showPassword = it },
         onCreateAccount = {
             Log.d(TAG, "First name: $firstName, Last name: $lastName, Email: $email")
         },
@@ -70,16 +74,19 @@ fun SignUpScreen(
     password: String,
     confirmPassword: String,
     termsAccepted: Boolean,
+    showPassword: Boolean,
     onFirstNameChange: (String) -> Unit,
     onLastNameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onConfirmPasswordChange: (String) -> Unit,
     onTermsChange: (Boolean) -> Unit,
+    onShowPasswordChange: (Boolean) -> Unit,
     onCreateAccount: () -> Unit,
     onBack: () -> Unit
 ) {
     val passwordsMatch = password == confirmPassword
+    val passwordTooShort = password.isNotEmpty() && password.length < 6
     val canCreate = firstName.isNotBlank() &&
         lastName.isNotBlank() &&
         email.isNotBlank() &&
@@ -87,6 +94,9 @@ fun SignUpScreen(
         confirmPassword.isNotBlank() &&
         passwordsMatch &&
         termsAccepted
+
+    val passwordTransformation =
+        if (showPassword) VisualTransformation.None else PasswordVisualTransformation()
 
     Column(
         modifier = Modifier
@@ -115,14 +125,21 @@ fun SignUpScreen(
             value = password,
             event = onPasswordChange,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = passwordTransformation,
             label = "Password"
+        )
+        Text(
+            text = "Password must be at least 6 characters",
+            style = MaterialTheme.typography.bodySmall,
+            color = if (passwordTooShort) MaterialTheme.colorScheme.error
+            else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.fillMaxWidth()
         )
         ReusableInputFiled(
             value = confirmPassword,
             event = onConfirmPasswordChange,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = passwordTransformation,
             label = "Confirm password"
         )
         if (confirmPassword.isNotEmpty() && !passwordsMatch) {
@@ -132,6 +149,11 @@ fun SignUpScreen(
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.fillMaxWidth()
             )
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Checkbox(checked = showPassword, onCheckedChange = onShowPasswordChange)
+            Text(text = "Show password")
         }
 
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {

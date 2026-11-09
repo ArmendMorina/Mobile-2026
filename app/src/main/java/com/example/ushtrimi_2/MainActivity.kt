@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -137,6 +138,7 @@ fun GreetingPreview() {
 fun LoginRoute(innerPadding: PaddingValues, onSignUpClick: () -> Unit) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
+    var showPassword by rememberSaveable { mutableStateOf(false) }
     var showErrorAlert by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -144,8 +146,10 @@ fun LoginRoute(innerPadding: PaddingValues, onSignUpClick: () -> Unit) {
         innerPadding = innerPadding,
         email = email,
         password = password,
+        showPassword = showPassword,
         onEmailChange = { email = it },
         onPasswordChange = { password = it },
+        onShowPasswordChange = { showPassword = it },
         onLoginClick = {
             if (validateUser(email = email, password = password)) {
                 Toast.makeText(
@@ -180,8 +184,10 @@ fun LoginScreen(
     innerPadding: PaddingValues,
     email: String,
     password: String,
+    showPassword: Boolean,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onShowPasswordChange: (Boolean) -> Unit,
     onLoginClick: () -> Unit,
     onSignUpClick: () -> Unit
 ) {
@@ -220,9 +226,18 @@ fun LoginScreen(
                 value = password,
                 event = onPasswordChange,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                visualTransformation = PasswordVisualTransformation(),
+                visualTransformation = if (showPassword) VisualTransformation.None
+                else PasswordVisualTransformation(),
                 label = "Password"
             )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Checkbox(checked = showPassword, onCheckedChange = onShowPasswordChange)
+                Text(text = "Show password")
+            }
 
             Row(
                 modifier = Modifier
