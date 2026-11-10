@@ -58,7 +58,19 @@ class MainActivity : ComponentActivity() {
         setContent {
             Ushtrimi_2Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen(innerPadding )
+                    var currentScreen by rememberSaveable { mutableStateOf("login") }
+
+                    if (currentScreen == "login") {
+                        LoginScreen(
+                            innerPadding = innerPadding,
+                            onSignUpClick = { currentScreen = "signup" }
+                        )
+                    } else {
+                        SignUpScreen(
+                            innerPadding = innerPadding,
+                            onLoginClick = { currentScreen = "login" }
+                        )
+                    }
 
                 }
             }
@@ -120,7 +132,7 @@ fun GreetingPreview() {
 }
 
 @Composable
-fun LoginScreen(innerPadding: PaddingValues) {
+fun LoginScreen(innerPadding: PaddingValues, onSignUpClick: () -> Unit) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
@@ -187,6 +199,10 @@ fun LoginScreen(innerPadding: PaddingValues) {
                 enabled = !email.isBlank() && !password.isBlank()
             ) {
                 Text(text = "Login")
+            }
+
+            TextButton(onClick = onSignUpClick) {
+                Text(text = "Don't have an account? Sign Up")
             }
         }
     }
