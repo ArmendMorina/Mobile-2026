@@ -9,5 +9,3 @@ public class User extends Student {
         super(studentEmail, studentPassword);
     }
 }
-
-

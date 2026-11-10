@@ -8,20 +8,22 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,19 +35,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.ushtrimi_2.reusableCoomposable.ReusableInputFiled
 import com.example.ushtrimi_2.ui.theme.Ushtrimi_2Theme
 import com.example.ushtrimi_2.utlis.validateUser
-import java.time.format.TextStyle
 
 class MainActivity : ComponentActivity() {
 
@@ -58,7 +56,19 @@ class MainActivity : ComponentActivity() {
         setContent {
             Ushtrimi_2Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen(innerPadding )
+                    var showSignUp by rememberSaveable { mutableStateOf(false) }
+
+                    if (showSignUp) {
+                        SignUpScreen(
+                            innerPadding = innerPadding,
+                            onBackToLogin = { showSignUp = false }
+                        )
+                    } else {
+                        LoginScreen(
+                            innerPadding = innerPadding,
+                            onSignUp = { showSignUp = true }
+                        )
+                    }
 
                 }
             }
@@ -120,7 +130,10 @@ fun GreetingPreview() {
 }
 
 @Composable
-fun LoginScreen(innerPadding: PaddingValues) {
+fun LoginScreen(
+    innerPadding: PaddingValues,
+    onSignUp: () -> Unit
+) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
@@ -154,7 +167,7 @@ fun LoginScreen(innerPadding: PaddingValues) {
             ReusableInputFiled(
                 value = email,
                 event = {enteredEmail->
-                  email = enteredEmail
+                    email = enteredEmail
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 label = "Email"
@@ -162,31 +175,45 @@ fun LoginScreen(innerPadding: PaddingValues) {
 
             //password
             ReusableInputFiled(
-               value = password,
-               event = {eneteredPassword->
-                   password = eneteredPassword
-               },
-               keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-               visualTransformation = PasswordVisualTransformation(),
-               label = "Password"
-           )
-
-            Button(
-                onClick = {
-                    if (validateUser(email = email, password = password)){
-                        Toast.makeText(context,"Email and password from user are correct",
-                            Toast.LENGTH_LONG).show();
-                    }else{
-                       showErrorAlert = true
-                    }
-
+                value = password,
+                event = {eneteredPassword->
+                    password = eneteredPassword
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation = PasswordVisualTransformation(),
+                label = "Password"
+            )
+
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp),
-                enabled = !email.isBlank() && !password.isBlank()
+                    .padding(top = 32.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(text = "Login")
+                Button(
+                    onClick = {
+                        if (validateUser(email = email, password = password)) {
+                            Toast.makeText(
+                                context,
+                                "Email and password from user are correct",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } else {
+                            showErrorAlert = true
+                        }
+                    },
+                    modifier = Modifier.weight(1f),
+                    enabled = email.isNotBlank() && password.isNotBlank()
+                ) {
+                    Text(text = "Login")
+                }
+
+                Button(
+                    onClick = onSignUp,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(text = "Sign Up")
+                }
             }
         }
     }
@@ -210,9 +237,158 @@ fun LoginScreen(innerPadding: PaddingValues) {
             }
         )
     }
+}
 
+@Composable
+fun SignUpScreen(
+    innerPadding: PaddingValues,
+    onBackToLogin: () -> Unit
+) {
+    var firstName by rememberSaveable { mutableStateOf("") }
+    var lastName by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var confirmPassword by rememberSaveable { mutableStateOf("") }
+    var termsAccepted by rememberSaveable { mutableStateOf(false) }
 
+    SignUpForm(
+        innerPadding = innerPadding,
+        firstName = firstName,
+        onFirstNameChange = { firstName = it },
+        lastName = lastName,
+        onLastNameChange = { lastName = it },
+        email = email,
+        onEmailChange = { email = it },
+        password = password,
+        onPasswordChange = { password = it },
+        confirmPassword = confirmPassword,
+        onConfirmPasswordChange = { confirmPassword = it },
+        termsAccepted = termsAccepted,
+        onTermsAcceptedChange = { termsAccepted = it },
+        onCreateAccount = {
+            Log.d(
+                "SignUp",
+                "Create account: firstName=$firstName, lastName=$lastName, email=$email"
+            )
+        },
+        onBackToLogin = onBackToLogin
+    )
+}
 
+@Composable
+fun SignUpForm(
+    innerPadding: PaddingValues,
+    firstName: String,
+    onFirstNameChange: (String) -> Unit,
+    lastName: String,
+    onLastNameChange: (String) -> Unit,
+    email: String,
+    onEmailChange: (String) -> Unit,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    confirmPassword: String,
+    onConfirmPasswordChange: (String) -> Unit,
+    termsAccepted: Boolean,
+    onTermsAcceptedChange: (Boolean) -> Unit,
+    onCreateAccount: () -> Unit,
+    onBackToLogin: () -> Unit
+) {
+    val passwordsMatch = password == confirmPassword
+    val canCreateAccount = firstName.isNotBlank() &&
+            lastName.isNotBlank() &&
+            email.isNotBlank() &&
+            password.length >= 6 &&
+            confirmPassword.isNotBlank() &&
+            passwordsMatch &&
+            termsAccepted
 
+    Column(
+        modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Create your account",
+            style = MaterialTheme.typography.headlineLarge
+        )
+        Spacer(modifier = Modifier.height(16.dp))
 
+        ReusableInputFiled(
+            value = firstName,
+            event = onFirstNameChange,
+            label = "First name"
+        )
+        ReusableInputFiled(
+            value = lastName,
+            event = onLastNameChange,
+            label = "Last name"
+        )
+        ReusableInputFiled(
+            value = email,
+            event = onEmailChange,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            label = "Email"
+        )
+        ReusableInputFiled(
+            value = password,
+            event = onPasswordChange,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = PasswordVisualTransformation(),
+            label = "Password",
+            showPasswordToggle = true
+        )
+        Text(
+            text = "Password must be at least 6 characters",
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp)
+        )
+        ReusableInputFiled(
+            value = confirmPassword,
+            event = onConfirmPasswordChange,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = PasswordVisualTransformation(),
+            label = "Confirm password",
+            showPasswordToggle = true
+        )
+
+        if (confirmPassword.isNotEmpty() && !passwordsMatch) {
+            Text(
+                text = "Passwords do not match",
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = termsAccepted,
+                onCheckedChange = onTermsAcceptedChange
+            )
+            Text(text = "I agree to the Terms of Use")
+        }
+
+        Button(
+            onClick = onCreateAccount,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            enabled = canCreateAccount
+        ) {
+            Text(text = "Create account")
+        }
+
+        TextButton(onClick = onBackToLogin) {
+            Text(text = "Back to Login")
+        }
+    }
 }

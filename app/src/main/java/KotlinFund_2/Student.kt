@@ -6,4 +6,3 @@ open class Student( val studentEmail: String, val studentPassword: String) :
 
 
 }
-

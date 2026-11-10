@@ -11,7 +11,7 @@ interface Logger {
 
 abstract class LogcatLogger : Logger {
     override fun logToLogcat() {
-       println("printoing to logcat")
+        println("printoing to logcat")
     }
 
     override fun logToFile() {
@@ -50,6 +50,3 @@ enum class WEEK(){
 data class USerV3(val firstName: String, val lastName : String){
 
 }
-
-
-

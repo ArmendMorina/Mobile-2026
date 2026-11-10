@@ -5,8 +5,8 @@ open class User(val email : String, val password: String ) {
 
 
     var firstname : String? = null
-   private var lastname: String? = null
-   private var age: Int?  = null
+    private var lastname: String? = null
+    private var age: Int?  = null
 
     fun getFirstName(): String?{
         return this.firstname
@@ -29,11 +29,11 @@ open class User(val email : String, val password: String ) {
     }
 
     fun updateLastname(lastName: String) {
-      this.lastname = lastname
+        this.lastname = lastname
     }
 
     fun updateAge(age: Int) {
-      this.age = age
+        this.age = age
     }
 
     override fun toString(): String {

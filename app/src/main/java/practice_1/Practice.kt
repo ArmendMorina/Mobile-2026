@@ -26,7 +26,7 @@ data class Task(val title: String, val priority: Priority)
 
 fun runPractice() {
     // 1
-    Student("Armend", 10).printSummary()
+    Student("Dion", 10).printSummary()
 
     // 2
     val shapes: List<Shape> = listOf(Circle(2.0), Rect(3.0, 4.0))

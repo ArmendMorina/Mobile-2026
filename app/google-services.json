@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "301505078323",
+    "project_id": "ushtrimi-2-1f358",
+    "storage_bucket": "ushtrimi-2-1f358.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:301505078323:android:c5ff107109c577891d2f46",
+        "android_client_info": {
+          "package_name": "com.example.ushtrimi_2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD__aBQz7YY2cft_QtpWDiBvmAetBXXA0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
