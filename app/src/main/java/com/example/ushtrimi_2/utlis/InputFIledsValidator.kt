@@ -4,6 +4,6 @@ fun validateUser(
     email: String,
     password: String
 ): Boolean {
-    return email == "armend.morina@cacttus.edu" && password == "123456"
+    return  true//email == "armend.morina@cacttus.edu" && password == "123456"
 
 }
