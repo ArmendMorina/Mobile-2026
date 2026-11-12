@@ -1,6 +1,7 @@
 package com.example.ushtrimi_2
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -36,12 +37,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.ushtrimi_2.home.contacts.ContactsActivity
 import com.example.ushtrimi_2.reusableCoomposable.ReusableInputFiled
 import com.example.ushtrimi_2.ui.theme.Ushtrimi_2Theme
 import com.example.ushtrimi_2.utlis.validateUser
@@ -138,7 +143,7 @@ fun LoginScreen(innerPadding: PaddingValues) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(dimensionResource(R.dimen.default_padding))
         ) {
             Image(
                 painter = painterResource(R.drawable.ic_lock),
@@ -147,7 +152,7 @@ fun LoginScreen(innerPadding: PaddingValues) {
             )
 
             Text(
-                text = "Welcome back",
+                text = stringResource(R.string.welcome_back),
                 style = MaterialTheme.typography.headlineLarge
             )
             //email
@@ -157,7 +162,7 @@ fun LoginScreen(innerPadding: PaddingValues) {
                   email = enteredEmail
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                label = "Email"
+                label = stringResource(R.string.email)
             )
 
             //password
@@ -168,7 +173,7 @@ fun LoginScreen(innerPadding: PaddingValues) {
                },
                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                visualTransformation = PasswordVisualTransformation(),
-               label = "Password"
+               label = stringResource(R.string.password)
            )
 
             Button(
@@ -176,6 +181,13 @@ fun LoginScreen(innerPadding: PaddingValues) {
                     if (validateUser(email = email, password = password)){
                         Toast.makeText(context,"Email and password from user are correct",
                             Toast.LENGTH_LONG).show();
+
+                        context.startActivity(
+                            Intent(
+                                context,
+                                ContactsActivity::class.java
+                            )
+                        )
                     }else{
                        showErrorAlert = true
                     }
@@ -186,7 +198,7 @@ fun LoginScreen(innerPadding: PaddingValues) {
                     .padding(32.dp),
                 enabled = !email.isBlank() && !password.isBlank()
             ) {
-                Text(text = "Login")
+                Text(text = stringResource(R.string.login))
             }
         }
     }
