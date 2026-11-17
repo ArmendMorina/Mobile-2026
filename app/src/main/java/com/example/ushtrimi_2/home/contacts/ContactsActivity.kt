@@ -1,5 +1,6 @@
 package com.example.ushtrimi_2.home.contacts
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -28,11 +29,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.IntentCompat
 import com.example.ushtrimi_2.R
 import com.example.ushtrimi_2.home.contacts.ui.theme.Ushtrimi_2Theme
+import com.example.ushtrimi_2.home.gallery.GalleryActivity
 import practice_1.Circle
 
 class ContactsActivity : ComponentActivity() {
@@ -97,16 +101,17 @@ fun ContactsList(contacts: List<ContactsUIModel>, modifier: Modifier = Modifier)
 
 @Composable
 fun ContactRow(contact: ContactsUIModel) {
+    val context = LocalContext.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
             .clickable {
-                Log.d(
-                    "ContatDetails",
-                    "ContactClicked: ${contact.firstName + " " + contact.lastName}"
-                )
-            },
+                val intent = Intent( context, GalleryActivity::class.java)
+                context.startActivity(intent)
+            }
+            .padding(8.dp)
+        ,
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
 
