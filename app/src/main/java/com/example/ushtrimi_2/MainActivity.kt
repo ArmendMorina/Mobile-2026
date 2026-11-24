@@ -46,7 +46,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ushtrimi_2.home.contacts.ContactsActivity
+import com.example.ushtrimi_2.navigation.AppNavigation
 import com.example.ushtrimi_2.reusableCoomposable.ReusableInputFiled
 import com.example.ushtrimi_2.ui.theme.Ushtrimi_2Theme
 import com.example.ushtrimi_2.utlis.validateUser
@@ -62,10 +62,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Ushtrimi_2Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                AppNavigation()
+               /* Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     LoginScreen(innerPadding )
 
-                }
+                }*/
             }
         }
     }
@@ -125,7 +126,9 @@ fun GreetingPreview() {
 }
 
 @Composable
-fun LoginScreen(innerPadding: PaddingValues) {
+fun LoginScreen(
+    onLoginSuccessfully: ()-> Unit
+) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
@@ -133,7 +136,7 @@ fun LoginScreen(innerPadding: PaddingValues) {
 
     Box(
         modifier = Modifier
-            .padding(innerPadding)
+            .padding(/*innerPadding*/)
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
@@ -181,13 +184,7 @@ fun LoginScreen(innerPadding: PaddingValues) {
                     if (validateUser(email = email, password = password)){
                         Toast.makeText(context,"Email and password from user are correct",
                             Toast.LENGTH_LONG).show();
-
-                        context.startActivity(
-                            Intent(
-                                context,
-                                ContactsActivity::class.java
-                            )
-                        )
+                        onLoginSuccessfully.invoke()
                     }else{
                        showErrorAlert = true
                     }

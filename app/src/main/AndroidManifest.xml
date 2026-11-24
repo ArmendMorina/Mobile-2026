@@ -12,12 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Ushtrimi_2">
-        <activity android:name=".home.gallery.GalleryActivity"/>
-        <activity
-            android:name=".home.contacts.ContactsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_contacts"
-            android:theme="@style/Theme.Ushtrimi_2" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -29,7 +24,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailsActivity" />
     </application>
 
 </manifest>
