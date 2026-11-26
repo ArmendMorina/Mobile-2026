@@ -26,8 +26,9 @@ import com.example.ushtrimi_2.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GalleryScreen(
+    contactId: String,
     onBack: () -> Unit,
-    onGalleryItemClicked: () -> Unit
+    onGalleryItemClicked: (Int) -> Unit
 ) {
     val galleryRepo = remember { GalleryRepo() }
 
@@ -48,7 +49,7 @@ fun GalleryScreen(
     ) { innerPadding ->
         GalleryList(
             modifier = Modifier.padding(innerPadding),
-            images = galleryRepo.loadGalleryImages(),
+            images = galleryRepo.loadGalleryImages(contactId),
             onGalleryItemClicked = onGalleryItemClicked
         )
     }
@@ -57,7 +58,7 @@ fun GalleryScreen(
 @Composable
 fun GalleryList(
     modifier: Modifier, images: List<Int>,
-    onGalleryItemClicked: () -> Unit
+    onGalleryItemClicked: (Int) -> Unit
 ) {
     LazyVerticalGrid(
         modifier = modifier.fillMaxSize(),
@@ -78,7 +79,7 @@ fun GalleryList(
 @Composable
 fun GalleryItem(
     imageId: Int,
-    onGalleryItemClicked: () -> Unit
+    onGalleryItemClicked: (Int) -> Unit
 ) {
     androidx.compose.foundation.Image(
         painter = painterResource(imageId),
@@ -86,7 +87,7 @@ fun GalleryItem(
         contentScale = ContentScale.Crop,
         modifier = Modifier.aspectRatio(1f)
             .clickable{
-                onGalleryItemClicked.invoke()
+                onGalleryItemClicked.invoke(imageId)
             }
     )
 }
