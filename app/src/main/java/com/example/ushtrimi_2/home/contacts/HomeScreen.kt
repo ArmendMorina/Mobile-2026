@@ -40,7 +40,7 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onContactClicked: () -> Unit
+    onContactClicked: (String) -> Unit
 ) {
     val repo = remember { ContactsRepo() }
     Scaffold(
@@ -106,7 +106,7 @@ fun HomeScreen(
 @Composable
 fun ContactsList(
     contacts: List<ContactsUIModel>, modifier: Modifier = Modifier,
-    onContactClicked: () -> Unit
+    onContactClicked: (String) -> Unit
 ) {
     LazyColumn(
         modifier = modifier
@@ -135,7 +135,7 @@ fun ContactsList(
 @Composable
 fun ContactRow(
     contact: ContactsUIModel,
-    onContactClicked: () -> Unit
+    onContactClicked: (String) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -143,7 +143,7 @@ fun ContactRow(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                onContactClicked.invoke()
+                onContactClicked.invoke(contact.id)
 
             }
             .padding(8.dp),
